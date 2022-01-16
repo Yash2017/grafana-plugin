@@ -2,7 +2,6 @@ package plugin
 
 import (
 	"context"
-	"encoding/base64"
 	"encoding/json"
 	"net/http"
 
@@ -80,21 +79,29 @@ type qModel struct {
 	//constant      int    `json:"constant"`
 }
 
+var st = ""
+
+//var que string = ""
+
 func (d *SampleDatasource) query(_ context.Context, pCtx backend.PluginContext, query backend.DataQuery) backend.DataResponse {
 	response := backend.DataResponse{}
-	log.DefaultLogger.Info("query is ", query.JSON)
+	//log.DefaultLogger.Info("query is ", query.JSON)
 
-	val, err := jsonparser.GetString(query.JSON, "queryText")
+	qu, err := jsonparser.GetString(query.JSON, "queryText")
+	//que.fin := string(que.quer)
+	//que := string(quer)
+	st = string(qu)
+
 	if err != nil {
 		log.DefaultLogger.Info("JsonParser error is", err)
 	}
-	log.DefaultLogger.Info("This is the val string", val)
-	dat, err := base64.StdEncoding.DecodeString(string(val))
-	if err != nil {
-		//
-	}
+	log.DefaultLogger.Info("This is the val string", st)
+	//dat, err := base64.StdEncoding.DecodeString(string(val))
+	//if err != nil {
+	//
+	//}
 
-	log.DefaultLogger.Info("This is the val string after decoding", dat)
+	//log.DefaultLogger.Info("This is the val string after decoding", dat)
 	// Unmarshal the JSON into our queryModel.
 	var qm qModel
 
@@ -169,8 +176,8 @@ func (d *SampleDatasource) SubscribeStream(_ context.Context, req *backend.Subsc
 
 func DoneAsync(val chan []byte) {
 	//r := make(chan []byte, 5096)
-
-	config, err := websocket.NewConfig("ws://localhost:8080/vui/platforms/volttron1/pubsub/devices/Campus/Building1/Fake1/all", "ws://localhost:8080/vui/platforms/volttron1/pubsub/devices/Campus/Building1/Fake1/all")
+	log.DefaultLogger.Info("This is the quer string", st)
+	config, err := websocket.NewConfig(st, st)
 	if err != nil {
 
 	}
@@ -224,7 +231,7 @@ func (d *SampleDatasource) RunStream(ctx context.Context, req *backend.RunStream
 			return nil
 		case al := <-val:
 			// Send new data periodically.
-			log.DefaultLogger.Info("This is the strn variable", string(al))
+			//log.DefaultLogger.Info("This is the strn variable", string(al))
 			frame.Fields[0].Set(0, time.Now())
 			frame.Fields[1].Set(0, string(al))
 
